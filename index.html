@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluador de Expresiones Aritméticas</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 { color: #333; font-size: 1.5rem; margin-bottom: 1.5rem; }
+        
+        .input-group { margin-bottom: 1rem; text-align: left; }
+        label { display: block; font-weight: bold; margin-bottom: 0.5rem; color: #555; }
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover { background-color: #0056b3; }
+
+        .output {
+            margin-top: 1.5rem;
+            text-align: left;
+            background: #fafafa;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            display: none;
+        }
+        .result-row { margin-bottom: 10px; border-bottom: 1px dashed #ddd; padding-bottom: 5px; }
+        .result-row:last-child { border-bottom: none; }
+        .label-res { font-weight: bold; color: #007bff; font-size: 0.9rem; }
+        .val-res { font-family: monospace; font-size: 1.1rem; color: #333; display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Árbol de Expresiones</h1>
+        
+        <div class="input-group">
+            <label>Ecuación (dígitos simples):</label>
+            <input type="text" id="inEq" value="3+4*5" placeholder="Ej: 3+4*5">
+        </div>
+
+        <button onclick="calcular()">Generar y Evaluar</button>
+
+        <div id="resultados" class="output">
+            <div class="result-row">
+                <span class="label-res">PreOrder (Prefija):</span>
+                <span class="val-res" id="txtPre">-</span>
+                <span class="label-res">Resultado:</span>
+                <span class="val-res" id="valPre">-</span>
+            </div>
+            <div class="result-row">
+                <span class="label-res">PostOrder (Posfija):</span>
+                <span class="val-res" id="txtPost">-</span>
+                <span class="label-res">Resultado:</span>
+                <span class="val-res" id="valPost">-</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="arbol.js"></script>
+    <script src="funcAuxiliares.js"></script>
+    <script src="app.js"></script>
+
+    <script>
+        function calcular() {
+            try {
+                const eq = document.getElementById('inEq').value;
+                if(!eq) return;
+
+                // 1. Crear el Árbol
+                const miArbol = arbol(eq);
+
+                // 2. Obtener Recorridos
+                const strPre = miArbol.preOrder();
+                const strPost = miArbol.postOrder();
+
+                // 3. Evaluar Matemáticamente
+                const resPre = preOrder(strPre);
+                const resPost = postOrder(strPost);
+
+                // 4. Mostrar
+                document.getElementById('txtPre').innerText = strPre;
+                document.getElementById('valPre').innerText = resPre;
+                document.getElementById('txtPost').innerText = strPost;
+                document.getElementById('valPost').innerText = resPost;
+
+                document.getElementById('resultados').style.display = 'block';
+            } catch (e) {
+                alert("Error: " + e.message);
+                console.error(e);
+            }
+        }
+    </script>
+</body>
+</html>
